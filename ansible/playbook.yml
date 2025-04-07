@@ -1,0 +1,5 @@
+- name: Setup DevBox de IA
+  hosts: devbox
+  become: yes
+  roles:
+    - devbox

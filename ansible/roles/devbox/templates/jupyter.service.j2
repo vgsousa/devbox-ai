@@ -1,0 +1,12 @@
+[Unit]
+Description=Jupyter Lab
+
+[Service]
+Type=simple
+ExecStart=/home/devbox-ia/devbox-venv/bin/jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token='devbox123' --allow-root
+User=devbox
+WorkingDirectory=/home/devbox-ia/projetos-ia
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,72 @@
+- name: Atualiza pacotes
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Instala dependências
+  apt:
+    name:
+      - python3-pip
+      - python3-venv
+      - git
+      - htop
+      - unzip
+      - curl
+    state: present
+
+- name: Cria venv para projetos IA
+  command: python3 -m venv /home/devbox-ia/devbox-venv
+  args:
+    creates: /home/devbox-ia/devbox-venv
+
+- name: Criar requirements.txt com bibliotecas de IA
+  copy:
+    dest: /tmp/requirements.txt
+    content: |
+      torch
+      transformers
+      datasets
+      jupyterlab
+      accelerate
+      scikit-learn
+      pandas
+      joblib
+    owner: devbox
+    group: devbox
+    mode: '0644'
+
+- name: Instala libs IA no venv
+  pip:
+    requirements: /tmp/requirements.txt
+    virtualenv: /home/devbox-ia/devbox-venv
+
+- name: Garantir ownership /home/devbox-ia
+  file:
+    path: /home/devbox-ia
+    owner: devbox
+    group: devbox
+    recurse: yes
+
+- name: Garantir permissões /home/devbox-ia
+  file:
+    path: /home/devbox-ia
+    mode: '0755'
+
+- name: Cria pasta de projetos
+  file:
+    path: /home/devbox-ia/projetos-ia
+    state: directory
+    owner: devbox
+    group: devbox
+    mode: '0755'
+
+- name: Habilita Jupyter como serviço
+  template:
+    src: jupyter.service.j2
+    dest: /etc/systemd/system/jupyter.service
+
+- name: Habilita e inicia Jupyter
+  systemd:
+    name: jupyter
+    enabled: yes
+    state: started

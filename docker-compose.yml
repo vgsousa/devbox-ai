@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  tf-ansible:
+    mem_limit: 4g
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./terraform:/workspace/terraform
+      - ./ansible:/workspace/ansible
+      - ./keys:/.ssh
+    env_file:
+      - .env
+    tty: true
